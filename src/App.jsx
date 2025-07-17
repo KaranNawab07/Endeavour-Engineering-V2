@@ -1,7 +1,8 @@
 
 import React, { useState } from "react";
 import jsPDF from "jspdf";
-import letterhead from "/letterhead.jpg";
+doc.addImage("/letterhead.jpg", "JPEG", 0, 0, pageWidth, pageHeight);
+
 
 export default function App() {
   const [tubes, setTubes] = useState([{ od: 0, id: 0, length: 0, qty: 1 }]);
