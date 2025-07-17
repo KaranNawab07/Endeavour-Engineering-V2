@@ -130,17 +130,17 @@ export default function App() {
         <div key={index} style={{ border: "1px solid #ccc", padding: "10px", marginTop: "10px" }}>
           <h4>{entry.type === "tube" ? "Tube Entry" : "Sheet Entry"} #{index + 1}</h4>
           {entry.type === "tube" ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <>
               <input placeholder="OD (mm)" type="number" value={entry.od} onChange={e => handleChange(index, "od", +e.target.value)} />
               <input placeholder="ID (mm)" type="number" value={entry.id} onChange={e => handleChange(index, "id", +e.target.value)} />
               <input placeholder="Length (mm)" type="number" value={entry.length} onChange={e => handleChange(index, "length", +e.target.value)} />
-            </div>
+            </>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <>
               <input placeholder="Length (mm)" type="number" value={entry.l} onChange={e => handleChange(index, "l", +e.target.value)} />
               <input placeholder="Width (mm)" type="number" value={entry.w} onChange={e => handleChange(index, "w", +e.target.value)} />
               <input placeholder="Thickness (mm)" type="number" value={entry.t} onChange={e => handleChange(index, "t", +e.target.value)} />
-            </div>
+            </>
           )}
           <input placeholder="Quantity" type="number" value={entry.qty} onChange={e => handleChange(index, "qty", +e.target.value)} />
         </div>
