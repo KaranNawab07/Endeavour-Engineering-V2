@@ -65,7 +65,7 @@ export default function App() {
       const pageHeight = doc.internal.pageSize.getHeight();
       doc.addImage(img, "JPEG", 0, 0, pageWidth, pageHeight);
 
-      doc.setFontSize(5);
+      doc.setFontSize(7);
       let y = 40;
       quoteText.split("\n").forEach(line => {
         if (line.trim() === "QUOTE:" || line.trim() === "Note:" || line.trim() === "Terms & Conditions:") {
