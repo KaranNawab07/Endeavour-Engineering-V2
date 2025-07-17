@@ -4,6 +4,7 @@ import jsPDF from "jspdf";
 
 export default function App() {
   const [tubes, setTubes] = useState([{ od: 0, id: 0, length: 0, qty: 1 }]);
+  const [quoteText, setQuoteText] = useState("");
 
   const handleTubeChange = (index, field, value) => {
     const newTubes = [...tubes];
@@ -15,6 +16,46 @@ export default function App() {
     setTubes([...tubes, { od: 0, id: 0, length: 0, qty: 1 }]);
   };
 
+  const generateQuote = () => {
+    let output = "Thank you for your inquiry. Please find below our quotation for the same.\n\n";
+    output += "QUOTE:\n\n";
+    tubes.forEach((tube, i) => {
+      const { od, id, length, qty } = tube;
+      const thickness = ((od - id) / 2).toFixed(2);
+      let material = "Carbon fiber Bi-directional 3K woven fabric + Epoxy resin as matrix.";
+      let rate = 13900;
+      if (id < 10) {
+        material = "Carbon fiber Bi-directional 3K Pre-Preg.";
+        rate = 16900;
+      }
+      const density = 1.65;
+      const volume = (Math.PI / 4) * (od ** 2 - id ** 2) * length / 1000;
+      const weight = volume * density / 1000;
+      const price = Math.round(weight * rate);
+
+      output += `[${i + 1}] Name : Carbon Fiber Round Tube\n\n`;
+      output += `Sizes :  ${od} mm OD x ${id} mm ID x ${length} mm L [ ${thickness} mm thickness]\n`;
+      output += `Finish of surface : Matte finish\n`;
+      output += `Material : ${material}\n`;
+      output += `Process : Roll wrap\n`;
+      output += `Qty./lot required : ${qty} nos\n`;
+      output += `Price/ pcs. : Rs.${price}/-\n\n`;
+    });
+
+    output += "Note:\n";
+    output += "[1] The dimensional tolerance for Tube is : OD +/- 0.1 mm, Length + 2-5 mm.\n\n";
+    output += "Terms & Conditions:\n";
+    output += "Payment : 50% advance along with the Purchase order, remaining amount to be paid prior to dispatch .\n";
+    output += "Taxes : 18 % GST Extra as actual\n";
+    output += "Inspection : At our end\n";
+    output += "Packing : Extra as actual\n";
+    output += "Freight : Extra as actual.\n";
+    output += "Validity : 7 days.\n\n";
+    output += "Hoping to receive your valued order.";
+
+    setQuoteText(output);
+  };
+
   const downloadPDF = () => {
     const img = new Image();
     img.src = "/letterhead.jpg";
@@ -24,71 +65,23 @@ export default function App() {
       const pageHeight = doc.internal.pageSize.getHeight();
       doc.addImage(img, "JPEG", 0, 0, pageWidth, pageHeight);
 
-      let y = 40;
       doc.setFontSize(5);
-      doc.setTextColor(0, 0, 0);
-      doc.text("Thank you for your inquiry. Please find below our quotation for the same.", 10, y);
-      y += 8;
-      doc.setFont("helvetica", "bold");
-      doc.text("QUOTE:", 10, y);
-      y += 6;
-
-      tubes.forEach((tube, i) => {
-        const { od, id, length, qty } = tube;
-        const thickness = ((od - id) / 2).toFixed(2);
-        let material = "Carbon fiber Bi-directional 3K woven fabric + Epoxy resin as matrix.";
-        let rate = 13900;
-        if (id < 10) {
-          material = "Carbon fiber Bi-directional 3K Pre-Preg.";
-          rate = 16900;
+      let y = 40;
+      quoteText.split("\n").forEach(line => {
+        if (line.trim() === "QUOTE:" || line.trim() === "Note:" || line.trim() === "Terms & Conditions:") {
+          doc.setFont("helvetica", "bold");
+        } else {
+          doc.setFont("helvetica", "normal");
         }
-        const density = 1.65;
-        const volume = (Math.PI / 4) * (od ** 2 - id ** 2) * length / 1000;
-        const weight = volume * density / 1000;
-        const price = Math.round(weight * rate);
-
-        doc.setFont("helvetica", "bold");
-        doc.text(`[${i + 1}] Name : Carbon Fiber Round Tube`, 10, y);
+        if (line.includes("Price/ pcs.")) {
+          doc.setTextColor(255, 0, 0);
+        } else {
+          doc.setTextColor(0, 0, 0);
+        }
+        doc.text(line, 10, y);
         y += 5;
-        doc.text(`Sizes :  ${od} mm OD x ${id} mm ID x ${length} mm L [ ${thickness} mm thickness]`, 10, y);
-        y += 5;
-        doc.setFont("helvetica", "normal");
-        doc.text("Finish of surface : Matte finish", 10, y);
-        y += 5;
-        doc.text(`Material : ${material}`, 10, y);
-        y += 5;
-        doc.text("Process : Roll wrap", 10, y);
-        y += 5;
-        doc.text(`Qty./lot required : ${qty} nos`, 10, y);
-        y += 5;
-        doc.setTextColor(255, 0, 0);
-        doc.text(`Price/ pcs. : Rs.${price}/-`, 10, y);
-        doc.setTextColor(0, 0, 0);
-        y += 8;
       });
 
-      doc.setFont("helvetica", "bold");
-      doc.text("Note:", 10, y);
-      y += 5;
-      doc.setFont("helvetica", "normal");
-      doc.text("[1] The dimensional tolerance for Tube is : OD +/- 0.1 mm, Length + 2-5 mm.", 10, y);
-      y += 8;
-
-      doc.setFont("helvetica", "bold");
-      doc.text("Terms & Conditions:", 10, y);
-      y += 5;
-      doc.setFont("helvetica", "normal");
-      [
-        "Payment : 50% advance along with the Purchase order, remaining amount to be paid prior to dispatch .",
-        "Taxes : 18 % GST Extra as actual",
-        "Inspection : At our end",
-        "Packing : Extra as actual",
-        "Freight : Extra as actual.",
-        "Validity : 7 days."
-      ].forEach(t => { doc.text(t, 10, y); y += 5; });
-
-      y += 5;
-      doc.text("Hoping to receive your valued order.", 10, y);
       doc.save("quotation.pdf");
     };
     img.onerror = () => alert("Failed to load letterhead image.");
@@ -105,8 +98,16 @@ export default function App() {
           <input type="number" placeholder="Quantity" defaultValue={1} onChange={e => handleTubeChange(i, "qty", e.target.value)} />
         </div>
       ))}
+
       <button onClick={addTube} style={{ marginRight: "1rem" }}>+ Add Tube</button>
+      <button onClick={generateQuote} style={{ marginRight: "1rem" }}>Generate Quote</button>
       <button onClick={downloadPDF}>Download PDF</button>
+
+      {quoteText && (
+        <pre style={{ marginTop: "2rem", whiteSpace: "pre-wrap", background: "#f9f9f9", padding: "1rem", border: "1px solid #ccc" }}>
+          {quoteText}
+        </pre>
+      )}
     </div>
   );
 }
