@@ -16,9 +16,12 @@ export default function App() {
     setTubes([...tubes, { od: 0, id: 0, length: 0, qty: 1 }]);
   };
 
+
   const generateQuote = () => {
-    let output = "Thank you for your inquiry. Please find below our quotation for the same.\n\n";
+    let output = "Dear Sir/Ma'am,\n\n";
+    output += "Thank you for your inquiry. Please find below our quotation for the same. Please let us know the quantity required.\n\n";
     output += "QUOTE:\n\n";
+
     tubes.forEach((tube, i) => {
       const { od, id, length, qty } = tube;
       const thickness = ((od - id) / 2).toFixed(2);
@@ -33,25 +36,26 @@ export default function App() {
       const weight = volume * density / 1000;
       const price = Math.round(weight * rate);
 
-      output += `[${i + 1}] Name : Carbon Fiber Round Tube\n\n`;
-      output += `Sizes :  ${od} mm OD x ${id} mm ID x ${length} mm L [ ${thickness} mm thickness]\n`;
+      output += `[${i + 1}] Name : Carbon Fiber Round Tube \n\n`;
+      output += `Sizes : ${od} mm OD x ${id} mm ID x ${length} mm L (${thickness} mm wall thickness)\n`;
       output += `Finish of surface : Matte finish\n`;
       output += `Material : ${material}\n`;
-      output += `Process : Roll wrap\n`;
-      output += `Qty./lot required : ${qty} nos\n`;
-      output += `Price/ pcs. : Rs.${price}/-\n\n`;
+      output += `Process : Roll wrap.\n`;
+      output += `Qty./nos. : ${qty} nos.\n`;
+      output += `Price/pc : Rs. ${price}/-\n\n`;
     });
 
     output += "Note:\n";
     output += "[1] The dimensional tolerance for Tube is : OD +/- 0.1 mm, Length + 2-5 mm.\n\n";
     output += "Terms & Conditions:\n";
-    output += "Payment : 50% advance along with the Purchase order, remaining amount to be paid prior to dispatch .\n";
+    output += "Payment : 50% advance with the Purchase order, balance amount prior to dispatch . \n";
     output += "Taxes : 18 % GST Extra as actual\n";
     output += "Inspection : At our end\n";
     output += "Packing : Extra as actual\n";
     output += "Freight : Extra as actual.\n";
-    output += "Validity : 7 days.\n\n";
-    output += "Hoping to receive your valued order.";
+    output += "Validity : 7 days\n\n";
+    output += "Hoping to receive your valued order at the earliest.\n\n";
+    output += "Best Regards,\nKaran Nawab\nEndeavour Engineering";
 
     setQuoteText(output);
   };
